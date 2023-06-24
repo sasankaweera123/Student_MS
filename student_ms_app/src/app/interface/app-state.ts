@@ -1,4 +1,4 @@
-import { DataState } from "../enum/DataState";
+import { DataState } from '../enum/dataState';
 
 export interface AppSatate <T>{
     dataState: DataState;
