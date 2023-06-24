@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { StudentService } from './service/student.service';
-import { Observable, map, startWith } from 'rxjs';
+import { Observable, catchError, map, of, startWith } from 'rxjs';
 import { AppSatate } from './interface/app-state';
 import { CustomResponse } from './interface/custom-response';
 import { DataState } from './enum/dataState';
@@ -20,7 +20,10 @@ export class AppComponent implements OnInit {
       map((response) => {
         return { dataState: DataState.LOADED_STATE, appData: response };
       }),
-      startWith({dataState: DataState.LOADING_STATE})
+      startWith({dataState: DataState.LOADING_STATE}),
+      catchError((error: string)=>{
+        return of({dataState: DataState.ERROR_STATE,error: error})
+      })
     );
   }
 }
