@@ -4,6 +4,7 @@ import { Observable, catchError, map, of, startWith } from 'rxjs';
 import { AppSatate } from './interface/app-state';
 import { CustomResponse } from './interface/custom-response';
 import { DataState } from './enum/dataState';
+import { Gender } from './enum/gender.enum';
 
 @Component({
   selector: 'app-root',
@@ -11,9 +12,13 @@ import { DataState } from './enum/dataState';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
-  appState$: Observable<AppSatate<CustomResponse>> | undefined;
+  appState$: Observable<AppSatate<CustomResponse>>;
+  readonly DataState = DataState;
+  readonly Gender = Gender;
 
-  constructor(private studentService: StudentService) {}
+  constructor(private studentService: StudentService) {
+    this.appState$ = of({ dataState: DataState.LOADING_STATE });
+  }
 
   ngOnInit(): void {
     this.appState$ = this.studentService.students$.pipe(
