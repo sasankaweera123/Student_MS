@@ -1,0 +1,73 @@
+<!-- <div>{{ appState$ | async | json}}</div> -->
+<div class="container-xl">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="row">
+          <div class="col-sm-6">
+            <h2>Student Management System</h2>
+          </div>
+          <div class="col-sm-6">
+            <button type="button" class="btn btn-primary">Print Report</button>
+            <a
+              href="#addStudentModal"
+              class="btn btn-success"
+              data-bs-toggle="modal"
+              ><i class="material-icons">&#xE147;</i>
+              <span>Add New Student</span></a
+            >
+          </div>
+        </div>
+      </div>
+      <ng-container
+        *ngIf="appState$ | async as appState"
+        [ngSwitch]="appState.dataState"
+      >
+        <ng-container *ngSwitchCase="DataState.LOADING_STATE">
+          <div class="col-md-12 single-note item text-center">
+            <div class="spinner-boarder text-info" role="sratus"></div>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="DataState.LOADED_STATE">
+          <table class="table table-striped table-hover" id="students">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Student DOB</th>
+                <th>Student Gender</th>
+                <th>Student Age</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="
+                  let student of appState.appData?.data?.students;
+                  let i = index
+                "
+              >
+                <td>{{ student.id }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.dob }}</td>
+                <td>
+                  <span
+                    class="gender"
+                    >{{ student.gender === Gender.MALE ? 'M': student.gender === Gender.FEMALE ? 'F' : 'O'}}</span
+                  >
+                </td>
+                <td>{{ student.age }}</td>
+                <td>
+                  <span class="badge"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </ng-container>
+        <ng-container *ngSwitchCase="DataState.ERROR_STATE">
+          <div class="alert-danger">{{appState.error}}</div>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</div>
