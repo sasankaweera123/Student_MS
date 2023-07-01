@@ -16,6 +16,14 @@
               ><i class="material-icons">&#xE147;</i>
               <span>Add New Student</span></a
             >
+            <span>
+              <select [(ngModel)]="selectedGender" (ngModelChange)="filterStudents(selectedGender)"  name="gender" class="btn btn-info" title="Select Gender">
+                <option value="ALL">All</option>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHER">OTHER</option>
+              </select>
+            </span>
           </div>
         </div>
       </div>
