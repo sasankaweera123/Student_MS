@@ -1,9 +1,10 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subscriber, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { CustomResponse } from '../interface/custom-response';
 import { Student } from '../interface/student';
+import { Gender } from '../enum/gender.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +52,44 @@ export class StudentService {
         .delete<CustomResponse>(`${this.baseUrl}/student/${id}`)
         .pipe(tap(console.log), catchError(this.handleError))
     );
+
+  // filter students
+  filter$ = (
+    gender: Gender,
+    response: CustomResponse
+  ): Observable<CustomResponse> =>
+    new Observable<CustomResponse>((subscriber) => {
+      console.log(response);
+      if (response.data.students) {
+        subscriber.next(
+          gender === Gender.ALL
+            ? { ...response, message: `Students filtered by ${gender} Gender` }
+            : {
+                ...response,
+                message:
+                  response.data.students.filter(
+                    (student) => student.gender === gender
+                  ).length > 0
+                    ? `Students filtered by ${
+                        gender === Gender.FEMALE
+                          ? 'Female'
+                          : gender === Gender.MALE
+                          ? 'Male'
+                          : 'Other'
+                      } Gender`
+                    : `No Students of ${gender} found`,
+                data: {
+                  students: response.data.students.filter(
+                    (student) => student.gender === gender
+                  ),
+                },
+              }
+        );
+      } else {
+        subscriber.next(response); // Pass the original response if students is undefined
+      }
+      subscriber.complete();
+    }).pipe(tap(console.log), catchError(this.handleError));
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     console.log(error);
