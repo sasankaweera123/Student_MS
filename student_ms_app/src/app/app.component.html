@@ -10,7 +10,7 @@
           <div class="col-sm-6">
             <button type="button" class="btn btn-primary">Print Report</button>
             <a
-              href="#addStudentModal"
+              href="#addStudentModel"
               class="btn btn-success"
               data-bs-toggle="modal"
               ><i class="material-icons">&#xE147;</i>
@@ -21,7 +21,7 @@
                 <option value="ALL">All</option>
                 <option value="MALE">Male</option>
                 <option value="FEMALE">Female</option>
-                <option value="OTHER">OTHER</option>
+                <option value="OTHER">Other</option>
               </select>
             </span>
           </div>
@@ -33,7 +33,7 @@
       >
         <ng-container *ngSwitchCase="DataState.LOADING_STATE">
           <div class="col-md-12 single-note item text-center">
-            <div class="spinner-boarder text-info" role="sratus"></div>
+            <div class="spinner-boarder text-info" role="status"></div>
           </div>
         </ng-container>
         <ng-container *ngSwitchCase="DataState.LOADED_STATE">
@@ -76,6 +76,46 @@
           <div class="alert-danger">{{appState.error}}</div>
         </ng-container>
       </ng-container>
+    </div>
+  </div>
+</div>
+
+<!-- Add Model HTML -->
+<div id="addStudentModel" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form #studentForm="ngForm" (ngSubmit)="saveStudent(studentForm)" >
+        <div class="modal-header">
+          <h4 class="modal-title">Add Student</h4>
+          <button type="button" class="close" data-bs-dismiss="modal">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Student Name</label>
+            <input type="text" ngModel class="form-control" name="name" required />
+          </div>
+          <div class="form-group">
+            <label>Student DOB</label>
+            <input type="date" ngModel class="form-control" name="dob" required />
+          </div>
+          <div class="form-group">
+            <label>Student Gender</label>
+            <select name="gender" ngModel="OTHER" id="studentGender" title="Select Gender" required>
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+                <option value="OTHER">Other</option>
+              </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-default" id="closeModel" data-bs-dismiss="modal" value="Cancel" />
+          <input type="submit" [disabled] ="studentForm.invalid || (isLoading$ | async) " class="btn btn-success" value="Add" />
+          <i *ngIf="isLoading$ | async" class="fas fa-spinner fa-spin"></i>
+          <span *ngIf="isLoading$ | async" class="sr-only">Saving...</span>
+        </div>
+      </form>
     </div>
   </div>
 </div>
