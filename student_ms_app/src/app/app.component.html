@@ -8,7 +8,7 @@
             <h2>Student Management System</h2>
           </div>
           <div class="col-sm-6">
-            <button type="button" class="btn btn-primary">Print Report</button>
+            <button  (click)="printReport()"  type="button" class="btn btn-primary">Print Report</button>
             <a
               href="#addStudentModel"
               class="btn btn-success"
@@ -66,7 +66,14 @@
                 </td>
                 <td>{{ student.age }}</td>
                 <td>
-                  <span class="badge"></span>
+                  <a class="delete" data-toggle="modal" style="cursor: pointer;">
+                    <i
+                      class="material-icons"
+                      data-bs-target="#deleteStudentModel"
+                      (click)="deleteStudent(student)"
+                      >&#xE872;</i
+                    >
+                  </a>
                 </td>
               </tr>
             </tbody>
@@ -119,3 +126,4 @@
     </div>
   </div>
 </div>
+
