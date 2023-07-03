@@ -14,6 +14,7 @@ import { DataState } from './enum/dataState';
 import { Gender } from './enum/gender.enum';
 import { NgForm } from '@angular/forms';
 import { Student } from './interface/student';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +27,8 @@ export class AppComponent implements OnInit {
   readonly Gender = Gender;
   private dataSubject = new BehaviorSubject<CustomResponse | null>(null);
   selectedGender: Gender = Gender.ALL;
+  private isLoading = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoading.asObservable();
 
   constructor(private studentService: StudentService) {
     this.appState$ = of({ dataState: DataState.LOADING_STATE });
@@ -45,36 +48,46 @@ export class AppComponent implements OnInit {
   }
 
   saveStudent(studentForm: NgForm) {
+    this.isLoading.next(true);
     if (studentForm.valid) {
       const newStudent: Student = studentForm.value as Student;
-  
+
+      console.log(newStudent);
+      
       this.appState$ = this.studentService.add_new_student$(newStudent).pipe(
         map((response) => {
           const updatedStudents: Student[] = [
             ...(this.dataSubject.value?.data.students || []),
-            response.data.student!
+            response.data.student!,
           ];
-  
+
           this.dataSubject.next({
             ...response,
             data: {
-              students: updatedStudents
-            }
+              students: updatedStudents,
+            },
           });
-  
+
           document.getElementById('closeModal')?.click();
+          this.isLoading.next(false);
           studentForm.resetForm();
-  
-          return { dataState: DataState.LOADED_STATE, appData: this.dataSubject.value! };
+
+          return {
+            dataState: DataState.LOADED_STATE,
+            appData: this.dataSubject.value!,
+          };
         }),
-        startWith({ dataState: DataState.LOADING_STATE, appData: this.dataSubject.value! }),
+        startWith({
+          dataState: DataState.LOADING_STATE,
+          appData: this.dataSubject.value!,
+        }),
         catchError((error: string) => {
+          this.isLoading.next(false);
           return of({ dataState: DataState.ERROR_STATE, error: error });
         })
       );
     }
   }
-  
 
   filterStudents(gender: Gender) {
     const data = this.dataSubject.value || ({ data: {} } as CustomResponse);
