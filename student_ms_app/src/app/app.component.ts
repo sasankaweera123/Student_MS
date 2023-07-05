@@ -38,7 +38,13 @@ export class AppComponent implements OnInit {
     this.appState$ = this.studentService.students$.pipe(
       map((response) => {
         this.dataSubject.next(response);
-        return { dataState: DataState.LOADED_STATE, appData: response };
+        return {
+          dataState: DataState.LOADED_STATE,
+          appData: {
+            ...response,
+            data: { students: response.data.students?.reverse() },
+          },
+        };
       }),
       startWith({ dataState: DataState.LOADING_STATE }),
       catchError((error: string) => {
@@ -53,7 +59,7 @@ export class AppComponent implements OnInit {
       const newStudent: Student = studentForm.value as Student;
 
       console.log(newStudent);
-      
+
       this.appState$ = this.studentService.add_new_student$(newStudent).pipe(
         map((response) => {
           const updatedStudents: Student[] = [
@@ -89,6 +95,34 @@ export class AppComponent implements OnInit {
     }
   }
 
+  deleteStudent(student: Student): void {
+    this.appState$ = this.studentService.delete_student$(student.id).pipe(
+      map((response) => {
+        this.dataSubject.next({
+          ...response,
+          data: {
+            students: this.dataSubject.value?.data.students?.filter(
+              (s) => s.id !== student.id
+            ),
+          },
+        });
+        return {
+          dataState: DataState.LOADED_STATE,
+          appData: this.dataSubject.value!,
+        };
+      }),
+      startWith({
+        dataState: DataState.LOADING_STATE,
+        appData: this.dataSubject.value!,
+      }),
+      catchError((error: string) => {
+        return of({ dataState: DataState.ERROR_STATE, error: error });
+      })
+    );
+  }
+  
+  
+
   filterStudents(gender: Gender) {
     const data = this.dataSubject.value || ({ data: {} } as CustomResponse);
     this.appState$ = this.studentService.filter$(gender, data).pipe(
@@ -100,5 +134,21 @@ export class AppComponent implements OnInit {
         return of({ dataState: DataState.ERROR_STATE, error: error });
       })
     );
+  }
+
+  printReport(): void {
+    window.print();
+    // let dataType =
+    //   'application/vnd.ms-excel.sheet.macroEnabled.12';
+    // let fileName = 'students.xls';
+    // let tableSelect = document.getElementById('students');
+    // let tableHTML = tableSelect?.outerHTML.replace(/ /g, '%20');
+    // let downloadLink = document.createElement('a');
+
+    // document.body.appendChild(downloadLink);
+    // downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
+    // downloadLink.download = fileName;
+    // downloadLink.click();
+    // document.body.removeChild(downloadLink);
   }
 }
