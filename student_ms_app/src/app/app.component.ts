@@ -15,6 +15,8 @@ import { Gender } from './enum/gender.enum';
 import { NgForm } from '@angular/forms';
 import { Student } from './interface/student';
 import { formatDate } from '@angular/common';
+import { GoogleApiService } from './service/google-api.service';
+import { UserProfile } from './interface/user-profile';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +24,7 @@ import { formatDate } from '@angular/common';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
+
   appState$: Observable<AppSatate<CustomResponse>>;
   readonly DataState = DataState;
   readonly Gender = Gender;
@@ -29,6 +32,7 @@ export class AppComponent implements OnInit {
   selectedGender: Gender = Gender.ALL;
   private isLoading = new BehaviorSubject<boolean>(false);
   isLoading$ = this.isLoading.asObservable();
+  userInfo?: UserProfile;
 
   constructor(private studentService: StudentService) {
     this.appState$ = of({ dataState: DataState.LOADING_STATE });
@@ -151,4 +155,8 @@ export class AppComponent implements OnInit {
     // downloadLink.click();
     // document.body.removeChild(downloadLink);
   }
+
+  // logOut(): void {
+  //   this.googleApi.signOut();
+  // }
 }
